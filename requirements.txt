@@ -1,0 +1,11 @@
+flask
+flask-cors
+flask-sqlalchemy
+python-dotenv
+requests
+werkzeug
+androguard
+
+gunicorn
+google-play-scraper
+psycopg2-binary
