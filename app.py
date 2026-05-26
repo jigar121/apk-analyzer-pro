@@ -26,7 +26,7 @@ import concurrent.futures
 
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=2)
 
-frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'frontend'))
+frontend_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), 'frontend'))
 app = Flask(__name__, static_folder=frontend_dir, static_url_path='/')
 
 @app.route('/')
@@ -76,15 +76,15 @@ from flask import send_from_directory
 
 @app.route('/')
 def index():
-    return send_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../frontend'), 'index.html')
+    return send_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend'), 'index.html')
 
 @app.route('/report/<int:scan_id>')
 def report_view(scan_id):
-    return send_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../frontend'), 'index.html')
+    return send_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend'), 'index.html')
 
 @app.route('/<path:path>')
 def static_proxy(path):
-    return send_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), '../../frontend'), path)
+    return send_from_directory(os.path.join(os.path.dirname(os.path.abspath(__file__)), 'frontend'), path)
 
 @app.route("/health", methods=["GET"])
 def health_check():
