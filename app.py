@@ -4,6 +4,7 @@ import os
 import uuid
 import json
 import werkzeug.utils
+from werkzeug.exceptions import RequestEntityTooLarge
 import hashlib
 from dotenv import load_dotenv
 import tempfile
@@ -63,11 +64,12 @@ with app.app_context():
 
 # Configuration
 UPLOAD_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "uploads")
-MAX_FILE_SIZE_MB = int(os.getenv("MAX_FILE_SIZE_MB", 100))
+# Set a generous 500MB limit to prevent connection resets and 0% upload hangs.
+MAX_FILE_SIZE_MB = 500
 app.config['MAX_CONTENT_LENGTH'] = MAX_FILE_SIZE_MB * 1024 * 1024  # Enforce upload limit
 
 os.makedirs(UPLOAD_FOLDER, exist_ok=True)
-# trigger reload 12
+# trigger reload 13
 
 def allowed_file(filename):
     return '.' in filename and filename.rsplit('.', 1)[1].lower() == 'apk'
@@ -288,6 +290,9 @@ def upload_apk():
 
         return jsonify({"job_id": job_id, "status": "PENDING"}), 200
         
+    except RequestEntityTooLarge as re_err:
+        logger.warning(f"Upload failed: Request too large: {re_err}")
+        return jsonify({"error": f"File size exceeds the allowed limit ({MAX_FILE_SIZE_MB}MB)."}), 413
     except Exception as e:
         logger.error(f"Unexpected error in /upload endpoint: {str(e)}", exc_info=True)
         return jsonify({"error": "An unexpected server error occurred."}), 500
